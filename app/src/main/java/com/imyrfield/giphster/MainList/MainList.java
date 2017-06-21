@@ -10,26 +10,35 @@
  * permissions and limitations under the License.                                                   *
  ****************************************************************************************************/
 
-package com.imyrfield.giphster;
+/****************************************************************************************************
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file        *
+ * except in compliance with the License. You may obtain a copy of the License at:                  *
+ *                                                                                                  *
+ * http://www.apache.org/licenses/LICENSE-2.0                                                       *
+ *                                                                                                  *
+ * Unless required by applicable law or agreed to in writing, software distributed under the        *
+ * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY              *
+ * KIND, either express or implied. See the License for the specific language governing             *
+ * permissions and limitations under the License.                                                   *
+ ****************************************************************************************************/
 
-import android.support.design.widget.TabLayout;
+package com.imyrfield.giphster.MainList;
+
+import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.os.Bundle;
-import android.view.LayoutInflater;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 
-import android.widget.TextView;
+import com.imyrfield.giphster.API.GiphyResponse;
+import com.imyrfield.giphster.API.GiphyService;
+import com.imyrfield.giphster.R;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -38,6 +47,15 @@ import io.reactivex.Observable;
 public class MainList extends AppCompatActivity {
 
     private static final String TAG = "Main Activity";
+    /**
+     * The {@link ViewPager} that will host the section contents.
+     */
+    ViewPager mViewPager;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+    TabLayout tabLayout;
+    FloatingActionButton fab;
+    GiphyService giphyService;
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -48,21 +66,15 @@ public class MainList extends AppCompatActivity {
      */
     private SectionsPagerAdapter mSectionsPagerAdapter;
 
-    /**
-     * The {@link ViewPager} that will host the section contents.
-     */
-    ViewPager mViewPager;
-    @BindView(R.id.toolbar) Toolbar toolbar;
-    TabLayout tabLayout;
-    FloatingActionButton fab;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_main_list);
         ButterKnife.bind(this);
 
         setSupportActionBar(toolbar);
+
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
@@ -86,13 +98,10 @@ public class MainList extends AppCompatActivity {
 
     private void queryGiphy(){
 
-        int NUM_RESULTS = 24;
-        String API_KEY = "dc6zaTOxFJmzC";
-
-        IGiphyAPI giphyAPI = Utility.createService(IGiphyAPI.class);
+        giphyService = GiphyService.getInstance();
+        Observable<GiphyResponse> observable = giphyService.getTrendingGifs();
 
         // Fetch a list of the Github repositories.
-        Observable<GiphyResponse> observable = giphyAPI.trending(API_KEY, NUM_RESULTS, 0);
 
         // Execute the call asynchronously. Get a positive or negative callback.
 
@@ -118,76 +127,5 @@ public class MainList extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class PlaceholderFragment extends Fragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
-        private static final String ARG_SECTION_NUMBER = "section_number";
-
-        public PlaceholderFragment() {
-        }
-
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
-        public static PlaceholderFragment newInstance(int sectionNumber) {
-            PlaceholderFragment fragment = new PlaceholderFragment();
-            Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-            fragment.setArguments(args);
-            return fragment;
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_main_list, container, false);
-
-            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-            textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
-
-            return rootView;
-        }
-    }
-
-    /**
-     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
-     * one of the sections/tabs/pages.
-     */
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
-
-        public SectionsPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            // getItem is called to instantiate the fragment for the given page.
-            // Return a PlaceholderFragment (defined as a static inner class below).
-            return PlaceholderFragment.newInstance(position + 1);
-        }
-
-        @Override
-        public int getCount() {
-            return 2;
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            switch (position) {
-                case 0:
-                    return "Main";
-                case 1:
-                    return "Favorites";
-            }
-            return null;
-        }
     }
 }
