@@ -28,6 +28,7 @@ import com.imyrfield.giphster.R;
 import butterknife.BindView;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -47,7 +48,7 @@ public class MainFragment extends Fragment {
     RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
     private GifAdapter gifAdapter;
-
+    private CompositeDisposable disposables;
 
     public MainFragment() {
     }
@@ -69,6 +70,7 @@ public class MainFragment extends Fragment {
         super.onCreate(savedInstanceState);
         layoutManager = new GridLayoutManager(getActivity(), NUM_COLS);
         gifAdapter = new GifAdapter();
+        disposables = new CompositeDisposable();
 
     }
 
@@ -95,8 +97,18 @@ public class MainFragment extends Fragment {
     }
 
     private void displayGifs(Observable<GiphyResponse> observable) {
-        observable.subscribeOn(Schedulers.io())
+        disposables.add(observable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe();
+                .map(response -> response.getData())
+                .flatMap(Observable::fromIterable)
+                //Seperate into method to get URL
+                .subscribe(response -> System.out.println(response.component2().getFixedWidth()))
+        );
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        disposables.dispose();
     }
 }
