@@ -21,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bumptech.glide.integration.recyclerview.RecyclerViewPreloader;
 import com.imyrfield.giphster.API.GiphyResponse;
 import com.imyrfield.giphster.API.GiphyService;
 import com.imyrfield.giphster.R;
@@ -81,7 +82,9 @@ public class MainFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_main_list, container, false);
 
         recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(gifAdapter);
+        // RecylerViewPreloader Exampled??
+        // recyclerView.addOnScrollListener(new RecyclerViewPreloader<GiphyResponse.Gif>());
+        // recyclerView.setAdapter(gifAdapter);
 
         displayTrending();
 
