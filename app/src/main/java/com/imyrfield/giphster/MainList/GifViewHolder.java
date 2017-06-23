@@ -12,6 +12,7 @@
 
 package com.imyrfield.giphster.MainList;
 
+import android.media.Image;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
@@ -28,12 +29,15 @@ import butterknife.ButterKnife;
 
 class GifViewHolder extends RecyclerView.ViewHolder{
 
-    @BindView(R.id.progressbar) ProgressBar pbar;
+    ProgressBar pbar;
     @BindView(R.id.gif) ImageView gif;
+    ImageView gifImage;
 
     public GifViewHolder(View itemView) {
         super(itemView);
 
-        ButterKnife.bind(this, itemView);
+        //ButterKnife.bind(this, itemView);
+        gifImage = (ImageView) itemView.findViewById(R.id.gif);
+        pbar = (ProgressBar) itemView.findViewById(R.id.progressbar);
     }
 }

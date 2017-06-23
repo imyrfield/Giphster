@@ -80,11 +80,11 @@ public class MainFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_main_list, container, false);
-
+        recyclerView = (RecyclerView) rootView.findViewById(R.id.mainlist);
         recyclerView.setLayoutManager(layoutManager);
         // RecylerViewPreloader Exampled??
         // recyclerView.addOnScrollListener(new RecyclerViewPreloader<GiphyResponse.Gif>());
-        // recyclerView.setAdapter(gifAdapter);
+        recyclerView.setAdapter(gifAdapter);
 
         displayTrending();
 
@@ -105,8 +105,12 @@ public class MainFragment extends Fragment {
                 .map(response -> response.getData())
                 .flatMap(Observable::fromIterable)
                 //Seperate into method to get URL
-                .subscribe(response -> System.out.println(response.component2().getFixedWidth()))
-        );
+                .subscribe(response -> {
+                    gifAdapter.list.add(response.component2().getFixedWidth()
+                            //)System.out.println(response.component2().getFixedWidth()))
+                    );
+                    gifAdapter.notifyDataSetChanged();
+                }));
     }
 
     @Override

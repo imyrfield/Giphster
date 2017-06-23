@@ -35,7 +35,7 @@ import static com.bumptech.glide.request.RequestOptions.centerCropTransform;
 
 public class GifAdapter extends RecyclerView.Adapter<GifViewHolder> {
 
-    private List<Gif> list = new ArrayList<>();
+    public List<Gif> list = new ArrayList<>();
     RequestOptions options = new RequestOptions()
             .placeholder(R.drawable.ic_image_placeholder)
             .error(R.drawable.ic_image_error)
@@ -49,15 +49,17 @@ public class GifAdapter extends RecyclerView.Adapter<GifViewHolder> {
     @Override
     public void onBindViewHolder(GifViewHolder holder, int position) {
 
+            Glide.with(holder.gifImage.getContext())
+                    .asGif()
+                    .load(list.get(position).getUrl())
+                    .apply(options)
+                    .into(holder.gifImage);
 
-        Glide.with(holder.gif.getContext())
-                .asGif()
-                .load(list.get(position).getUrl())
-                .apply(options)
-                .into(holder.gif);
+            // TODO: hide progress bar and show imageview
+            holder.gifImage.setVisibility(View.VISIBLE);
+            holder.pbar.setVisibility(View.INVISIBLE);
+            holder.itemView.setOnClickListener(view -> loadDialog(view));
 
-        // TODO: hide progress bar and show imageview
-        holder.itemView.setOnClickListener(view -> loadDialog(view));
     }
 
     private void loadDialog(View view) {
@@ -66,8 +68,8 @@ public class GifAdapter extends RecyclerView.Adapter<GifViewHolder> {
     @Override
     public void onViewRecycled(final GifViewHolder holder) {
         super.onViewRecycled(holder);
-        Glide.with(holder.gif.getContext()).clear(holder.gif);
-        holder.gif.setImageDrawable(null);
+        Glide.with(holder.gifImage.getContext()).clear(holder.gifImage);
+        holder.gifImage.setImageDrawable(null);
     }
 
     @Override
