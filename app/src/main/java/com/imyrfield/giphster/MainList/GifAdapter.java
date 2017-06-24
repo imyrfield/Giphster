@@ -36,6 +36,7 @@ import static com.bumptech.glide.request.RequestOptions.centerCropTransform;
 public class GifAdapter extends RecyclerView.Adapter<GifViewHolder> {
 
     public List<Gif> list = new ArrayList<>();
+
     RequestOptions options = new RequestOptions()
             .placeholder(R.drawable.ic_image_placeholder)
             .error(R.drawable.ic_image_error)

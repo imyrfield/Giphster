@@ -12,14 +12,21 @@
 
 package com.imyrfield.giphster.MainList;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 
 import com.bumptech.glide.integration.recyclerview.RecyclerViewPreloader;
 import com.imyrfield.giphster.API.GiphyResponse;
@@ -72,6 +79,7 @@ public class MainFragment extends Fragment {
         layoutManager = new GridLayoutManager(getActivity(), NUM_COLS);
         gifAdapter = new GifAdapter();
         disposables = new CompositeDisposable();
+        setHasOptionsMenu(true);
 
     }
 
@@ -95,11 +103,64 @@ public class MainFragment extends Fragment {
         displayGifs(GiphyService.getInstance().getTrendingGifs());
     }
 
-    private void displaySearchResults(String search) {
+    public void displaySearchResults(String search) {
         displayGifs(GiphyService.getInstance().getSearchResults(search));
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+
+        inflater.inflate(R.menu.menu_main_list, menu);
+        MenuItem item = menu.findItem(R.id.menu_search);
+
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+
+                displaySearchResults(query);
+
+                //Hides keyboard after submitting
+                //searchView.setFocusable(false);
+                searchView.clearFocus();
+                try {
+                    InputMethodManager input = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
+                    input.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+
+                //pass info to fragment?
+                //Separate displayGifs method into utility, and pass list to it?
+                return false;
+            }
+        });
+
+        // Had to rollback to supportLibrary 25.3.0 because 26.0.0-alpha1 has a bug with this method
+        MenuItemCompat.setOnActionExpandListener(item, new MenuItemCompat.OnActionExpandListener(){
+
+            @Override
+            public boolean onMenuItemActionExpand(MenuItem item) {
+                return true;
+            }
+
+            @Override
+            public boolean onMenuItemActionCollapse(MenuItem item) {
+                displayTrending();
+                return true;
+            }
+        });
+    }
+
     private void displayGifs(Observable<GiphyResponse> observable) {
+        gifAdapter.list.clear();
         disposables.add(observable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .map(response -> response.getData())
@@ -114,8 +175,8 @@ public class MainFragment extends Fragment {
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        disposables.dispose();
+    public void onStop() {
+        super.onStop();
+        disposables.clear();
     }
 }

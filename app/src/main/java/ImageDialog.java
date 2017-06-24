@@ -10,46 +10,32 @@
  * permissions and limitations under the License.                                                   *
  ****************************************************************************************************/
 
-package com.imyrfield.giphster.MainList;
+import android.app.Dialog;
+import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatDialogFragment;
+
+import com.imyrfield.giphster.R;
 
 /**
- * Created by imyrfield on 2017-06-20.
+ * Created by imyrfield on 2017-06-22.
  */
 
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-
-/**
- * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
- * one of the sections/tabs/pages.
- */
-public class SectionsPagerAdapter extends FragmentPagerAdapter {
-
-    public SectionsPagerAdapter(FragmentManager fm) {
-        super(fm);
-    }
+public class ImageDialog extends AppCompatDialogFragment {
 
     @Override
-    public Fragment getItem(int position) {
-        // getItem is called to instantiate the fragment for the given page.
-        // Return a PlaceholderFragment (defined as a static inner class below).
-        return MainFragment.newInstance(position + 1);
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setIcon(android.R.drawable.ic_menu_search);
+        builder.setTitle("Search");
+        builder.setView(R.layout.image_dialog);
+        return builder.create();
     }
 
-    @Override
-    public int getCount() {
-        return 2;
-    }
 
     @Override
-    public CharSequence getPageTitle(int position) {
-        switch (position) {
-            case 0:
-                return "Trending";
-            case 1:
-                return "Favorites";
-        }
-        return null;
+    public void dismiss() {
+        super.dismiss();
     }
 }

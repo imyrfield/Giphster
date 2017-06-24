@@ -50,4 +50,6 @@ public class Utility {
     public static <S> S createService(Class<S> serviceClass){
         return  retrofit.create(serviceClass);
     }
+
+
 }
