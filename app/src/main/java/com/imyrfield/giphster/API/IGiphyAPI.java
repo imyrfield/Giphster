@@ -35,14 +35,14 @@ import retrofit2.http.Query;
 public interface IGiphyAPI {
 
     @GET("trending")
-    Observable<GiphyResponse> trending(
+    Observable<GiphyResponseModel> trending(
             @Query("api_key") String apiKey,
             @Query("limit") int limit,
             @Query("offset") int offset
     );
 
     @GET("search")
-    Observable<GiphyResponse> search(
+    Observable<GiphyResponseModel> search(
             @Query("api_key") String apiKey,
             @Query("q") String query,
             @Query("limit") int limit,

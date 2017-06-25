@@ -10,32 +10,25 @@
  * permissions and limitations under the License.                                                   *
  ****************************************************************************************************/
 
-import android.app.Dialog;
-import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatDialogFragment;
+package com.imyrfield.giphster.API
 
-import com.imyrfield.giphster.R;
+import com.google.gson.annotations.SerializedName
 
 /**
- * Created by imyrfield on 2017-06-22.
+ * Created by imyrfield on 2017-06-19.
  */
+data class GiphyResponseModel(val data : List<GiphyData>, val pagination : Pagination, val meta : Meta) {
 
-public class ImageDialog extends AppCompatDialogFragment {
+    data class GiphyData(val id: String, val images : ImgFormats)
 
-    @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
+    data class ImgFormats(@SerializedName("fixed_width") val fixedWidth : Gif,
+                          @SerializedName("fixed_width_small") val fixedWidthSmall : Gif,
+                          @SerializedName("fixed_width_still") val fixedWidthStill : Gif)
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setIcon(android.R.drawable.ic_menu_search);
-        builder.setTitle("Search");
-        builder.setView(R.layout.image_dialog);
-        return builder.create();
-    }
+    data class Gif(val url : String, val width : Int, val height : Int)
 
+    data class Meta(val status : Int)
 
-    @Override
-    public void dismiss() {
-        super.dismiss();
-    }
+    data class Pagination(@SerializedName("total_count") val totalCount : Int, val count : Int, val offset : Int )
+
 }

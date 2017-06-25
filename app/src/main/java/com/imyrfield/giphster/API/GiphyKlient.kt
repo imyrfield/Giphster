@@ -36,11 +36,11 @@ interface GiphyKlient {
     @GET("trending")
     fun trendingGifs(@Query("api_key") apiKey : String,
                      @Query("limit") limit : Int,
-                     @Query("offset") offset : Int) : Call<GiphyResponse>
+                     @Query("offset") offset : Int) : Call<GiphyResponseModel>
 
     @GET("search")
     fun search(@Query("api_key") apiKey : String,
                @Query("q") query : String,
                @Query("limit") limit : Int,
-               @Query("offset") offset : Int) : Call<GiphyResponse>
+               @Query("offset") offset : Int) : Call<GiphyResponseModel>
 }

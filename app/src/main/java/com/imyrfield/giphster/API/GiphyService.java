@@ -55,11 +55,11 @@ public final class GiphyService {
         return instance;
     }
 
-    public Observable<GiphyResponse> getTrendingGifs(){
+    public Observable<GiphyResponseModel> getTrendingGifs(){
         return giphyAPI.trending(API_KEY, NUM_RESULTS, 0);
     }
 
-    public Observable<GiphyResponse> getSearchResults(String search){
+    public Observable<GiphyResponseModel> getSearchResults(String search){
         return giphyAPI.search(API_KEY, search, NUM_RESULTS, 0);
     }
 }
