@@ -11,8 +11,29 @@
   ~ permissions and limitations under the License.                                                  ~
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimaryDark">
 
-</LinearLayout>
+    <ImageView
+        android:id="@+id/expanded_gif"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:layout_centerInParent="true"
+        android:src="@drawable/ic_image_placeholder"
+        />
+
+    <ImageButton
+        android:id="@+id/favorite_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:layout_margin="@dimen/margin_regular"
+        android:layout_alignBottom="@id/expanded_gif"
+        android:layout_alignEnd="@id/expanded_gif"
+        android:layout_alignRight="@id/expanded_gif"
+        android:src="@drawable/favorite_icon" />
+
+</RelativeLayout>

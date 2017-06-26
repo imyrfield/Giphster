@@ -28,12 +28,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 
-import com.bumptech.glide.integration.recyclerview.RecyclerViewPreloader;
-import com.imyrfield.giphster.API.GiphyResponse;
+import com.imyrfield.giphster.API.GiphyResponseModel;
 import com.imyrfield.giphster.API.GiphyService;
 import com.imyrfield.giphster.R;
 
-import butterknife.BindView;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -52,8 +50,7 @@ public class MainFragment extends Fragment {
      */
     private static final String ARG_SECTION_NUMBER = "section_number";
     private static final int NUM_COLS = 2;
-    @BindView(R.id.mainlist)
-    RecyclerView recyclerView;
+    private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
     private GifAdapter gifAdapter;
     private CompositeDisposable disposables;
@@ -77,7 +74,8 @@ public class MainFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         layoutManager = new GridLayoutManager(getActivity(), NUM_COLS);
-        gifAdapter = new GifAdapter();
+        gifAdapter = new GifAdapter(getActivity().getSupportFragmentManager());
+       // gifAdapter = new GifAdapter();
         disposables = new CompositeDisposable();
         setHasOptionsMenu(true);
 
@@ -87,13 +85,12 @@ public class MainFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.fragment_main_list, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_list, container, false);
         recyclerView = (RecyclerView) rootView.findViewById(R.id.mainlist);
         recyclerView.setLayoutManager(layoutManager);
-        // RecylerViewPreloader Exampled??
-        // recyclerView.addOnScrollListener(new RecyclerViewPreloader<GiphyResponse.Gif>());
         recyclerView.setAdapter(gifAdapter);
 
+        //Default list to trending Gifs
         displayTrending();
 
         return rootView;
@@ -159,7 +156,7 @@ public class MainFragment extends Fragment {
         });
     }
 
-    private void displayGifs(Observable<GiphyResponse> observable) {
+    private void displayGifs(Observable<GiphyResponseModel> observable) {
         gifAdapter.list.clear();
         disposables.add(observable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

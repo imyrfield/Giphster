@@ -26,17 +26,17 @@ package com.imyrfield.giphster.MainList;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 
+import com.imyrfield.giphster.Util.BusProvider;
+import com.imyrfield.giphster.ImageDialog;
 import com.imyrfield.giphster.R;
-
-import butterknife.ButterKnife;
+import com.squareup.otto.Subscribe;
 
 public class MainList extends AppCompatActivity {
 
@@ -45,8 +45,6 @@ public class MainList extends AppCompatActivity {
      * The {@link ViewPager} that will host the section contents.
      */
     ViewPager mViewPager;
-    //@BindView(R.id.toolbar)
-    //Toolbar toolbar;
     TabLayout tabLayout;
     FloatingActionButton fab;
 
@@ -64,8 +62,7 @@ public class MainList extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_main_list);
-        ButterKnife.bind(this);
+        setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -73,19 +70,26 @@ public class MainList extends AppCompatActivity {
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
         mViewPager = (ViewPager) findViewById(R.id.container);
+
         // Set up the ViewPager with the sections adapter.
         mViewPager.setAdapter(mSectionsPagerAdapter);
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
-        fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        BusProvider.getInstance().register(this);
+    }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        BusProvider.getInstance().unregister(this);
+    }
+
+    @Subscribe
+    public void onDialogEvent(BusProvider.DialogEvent event){
+        ImageDialog image = new ImageDialog();
+        image.setData(event.getData());
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.add(image, "gif").addToBackStack(null).commit();
     }
 }

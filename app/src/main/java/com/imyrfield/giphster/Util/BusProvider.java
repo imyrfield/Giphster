@@ -10,7 +10,7 @@
  * permissions and limitations under the License.                                                   *
  ****************************************************************************************************/
 
-package com.imyrfield.giphster; /****************************************************************************************************
+/****************************************************************************************************
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file        *
  * except in compliance with the License. You may obtain a copy of the License at:                  *
  *                                                                                                  *
@@ -22,52 +22,38 @@ package com.imyrfield.giphster; /***********************************************
  * permissions and limitations under the License.                                                   *
  ****************************************************************************************************/
 
-import android.app.Dialog;
-import android.content.Context;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatDialogFragment;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageButton;
-import android.widget.ImageView;
+package com.imyrfield.giphster.Util;
 
-import com.bumptech.glide.Glide;
-import com.imyrfield.giphster.API.GiphyResponseModel.*;
-import com.imyrfield.giphster.R;
+import com.imyrfield.giphster.API.GiphyResponseModel.*
+        ;
+import com.squareup.otto.Bus;
+
+import io.reactivex.Observable;
+import io.reactivex.subjects.PublishSubject;
+import io.reactivex.subjects.Subject;
 
 /**
- * Created by imyrfield on 2017-06-22.
+ * Created by imyrfield on 2017-06-25.
  */
 
-public class ImageDialog extends AppCompatDialogFragment {
+public final class BusProvider {
 
-    private ImageView image;
-    private Gif gif;
-    private ImageButton favorite;
+    private static final Bus BUS = new Bus();
 
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
-        View root = inflater.inflate(R.layout.image_dialog, container, false);
-        root.setClickable(false);
-
-        image = (ImageView) root.findViewById(R.id.expanded_gif);
-        Glide.with(this)
-                .asGif()
-                .load(gif.getUrl()).into(image);
-
-        favorite = (ImageButton) root.findViewById(R.id.favorite_icon);
-
-        return root;
+    public static Bus getInstance() {
+        return BUS;
     }
 
-    public void setData(Gif gif){
-        this.gif = gif;
-    }
+    public static class DialogEvent{
+        public Gif data;
 
+        public DialogEvent(Gif data){
+            this.data = data;
+        }
+
+        public Gif getData() {
+            return data;
+        }
+    }
 
 }
