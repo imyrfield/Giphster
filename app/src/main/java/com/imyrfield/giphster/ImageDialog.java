@@ -47,6 +47,22 @@ public class ImageDialog extends AppCompatDialogFragment {
     private ImageView image;
     private Gif gif;
     private ImageButton favorite;
+    FaviconClickHandler mFaviconClickHandler;
+
+    public interface FaviconClickHandler{
+        void isFavorite(Gif gif);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        // Enforce interface implementation on hosting activity
+        super.onAttach(context);
+        try{
+            mFaviconClickHandler = (FaviconClickHandler) getActivity();
+        }catch (ClassCastException e){
+            throw new ClassCastException(getActivity().toString() + " must implement FaviconClickHandler");
+        }
+    }
 
     @Nullable
     @Override
@@ -61,6 +77,12 @@ public class ImageDialog extends AppCompatDialogFragment {
                 .load(gif.getUrl()).into(image);
 
         favorite = (ImageButton) root.findViewById(R.id.favorite_icon);
+        favorite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mFaviconClickHandler.isFavorite(gif);
+            }
+        });
 
         return root;
     }

@@ -10,32 +10,19 @@
  * permissions and limitations under the License.                                                   *
  ****************************************************************************************************/
 
-package com.imyrfield.giphster.MainList;
+package com.imyrfield.giphster.Favorites
 
-import android.media.Image;
-import android.support.v7.widget.RecyclerView;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
-
-import com.imyrfield.giphster.R;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
+import com.imyrfield.giphster.API.GiphyResponseModel
+import io.realm.RealmObject
+import io.realm.annotations.PrimaryKey
+import java.util.*
 
 /**
- * Created by imyrfield on 2017-06-21.
+ * Created by imyrfield on 2017-06-25.
  */
 
-class GifViewHolder extends RecyclerView.ViewHolder{
-
-    ProgressBar pbar;
-    ImageView gifImage;
-
-    public GifViewHolder(View itemView) {
-        super(itemView);
-
-        gifImage = (ImageView) itemView.findViewById(R.id.gif);
-        pbar = (ProgressBar) itemView.findViewById(R.id.progressbar);
-    }
-}
+open class Favorites(
+        @PrimaryKey var createdAt : Long = 0, // Used to sort Favorites
+        var urlString: String = "",
+        var fileId : Long = 0 //Maps to DownloadManager file ID
+) : RealmObject(){}

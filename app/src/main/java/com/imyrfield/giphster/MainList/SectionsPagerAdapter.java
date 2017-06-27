@@ -20,6 +20,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
+import com.imyrfield.giphster.Favorites.FavoriteFragment;
+
 /**
  * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
  * one of the sections/tabs/pages.
@@ -38,7 +40,7 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
             case 0:
                 return MainFragment.newInstance(0);
             case 1:
-                return MainFragment.newInstance(1);
+                return new FavoriteFragment();
         }
         return MainFragment.newInstance(position + 1);
     }

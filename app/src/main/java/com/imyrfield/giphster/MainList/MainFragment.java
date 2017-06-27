@@ -27,10 +27,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.TextView;
 
 import com.imyrfield.giphster.API.GiphyResponseModel;
 import com.imyrfield.giphster.API.GiphyService;
 import com.imyrfield.giphster.R;
+
+import org.w3c.dom.Text;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -54,6 +57,7 @@ public class MainFragment extends Fragment {
     private RecyclerView.LayoutManager layoutManager;
     private GifAdapter gifAdapter;
     private CompositeDisposable disposables;
+    private TextView emptyView;
 
     public MainFragment() {
     }
@@ -89,8 +93,10 @@ public class MainFragment extends Fragment {
         recyclerView = (RecyclerView) rootView.findViewById(R.id.mainlist);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(gifAdapter);
+        emptyView = (TextView) rootView.findViewById(android.R.id.empty);
+        setupEmptyView();
 
-        //Default list to trending Gifs
+        // Default list shows trending Gifs
         displayTrending();
 
         return rootView;
@@ -165,7 +171,6 @@ public class MainFragment extends Fragment {
                 //Seperate into method to get URL
                 .subscribe(response -> {
                     gifAdapter.list.add(response.component2().getFixedWidth()
-                            //)System.out.println(response.component2().getFixedWidth()))
                     );
                     gifAdapter.notifyDataSetChanged();
                 }));
@@ -175,5 +180,11 @@ public class MainFragment extends Fragment {
     public void onStop() {
         super.onStop();
         disposables.clear();
+    }
+
+    private void setupEmptyView(){
+        emptyView.setText("Network Errors");
+        //emptyView.setVisibility(gifAdapter.getItemCount() == 0 ? View.VISIBLE : View.GONE);
+        //recyclerView.setVisibility(gifAdapter.getItemCount() == 0 ? View.GONE: View.VISIBLE);
     }
 }

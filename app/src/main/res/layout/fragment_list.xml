@@ -10,20 +10,36 @@
   ~ permissions and limitations under the License.                                                  ~
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 
-<android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/mainlist"
-    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginBottom="@dimen/margin_regular"
-    android:layout_marginEnd="@dimen/margin_regular"
-    android:layout_marginLeft="@dimen/margin_regular"
-    android:layout_marginRight="@dimen/margin_regular"
-    android:layout_marginStart="@dimen/margin_regular"
-    android:layout_marginTop="@dimen/margin_regular"
-    android:scrollbars="vertical"
-    app:layoutManager="android.support.v7.widget.GridLayoutManager"
-    tools:context="com.imyrfield.giphster.MainList.MainFragment"
-    tools:layoutManager="android.support.v7.widget.GridLayoutManager"
-    tools:listitem="@layout/list_item" />
+    android:layout_width="match_parent">
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/mainlist"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="@dimen/margin_regular"
+        android:layout_marginEnd="@dimen/margin_regular"
+        android:layout_marginLeft="@dimen/margin_regular"
+        android:layout_marginRight="@dimen/margin_regular"
+        android:layout_marginStart="@dimen/margin_regular"
+        android:layout_marginTop="@dimen/margin_regular"
+        android:scrollbars="vertical"
+        android:visibility="visible"
+        app:layoutManager="android.support.v7.widget.GridLayoutManager"
+        tools:context="com.imyrfield.giphster.MainList.MainFragment"
+        tools:layoutManager="android.support.v7.widget.GridLayoutManager"
+        tools:listitem="@layout/list_item" />
+
+    <TextView
+        android:id="@android:id/empty"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="No Favorites Added Yet :("
+        android:gravity="center"
+        android:visibility="gone"
+        />
+</FrameLayout>
