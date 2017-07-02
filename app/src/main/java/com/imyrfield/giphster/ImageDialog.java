@@ -22,7 +22,6 @@ package com.imyrfield.giphster; /***********************************************
  * permissions and limitations under the License.                                                   *
  ****************************************************************************************************/
 
-import android.app.DownloadManager;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -34,11 +33,14 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.imyrfield.giphster.API.GiphyResponseModel.*;
 import com.imyrfield.giphster.Favorites.FavoritesModel;
+import com.imyrfield.giphster.Util.RealmHelper;
 
-import io.realm.Realm;
 import io.realm.RealmResults;
+
+import static com.bumptech.glide.request.RequestOptions.centerCropTransform;
 
 /**
  * Created by imyrfield on 2017-06-22.
@@ -54,13 +56,19 @@ public class ImageDialog extends AppCompatDialogFragment {
     String url;
     long id = 0;
 
+    private RequestOptions options = new RequestOptions()
+            .error(R.drawable.ic_image_error)
+            .apply(centerCropTransform());
+
     public interface FaviconClickHandler{
         void toggleFavorite(Gif gif, long id);
     }
 
+    /*
+     * Enforce interface implementation on hosting activity
+     */
     @Override
     public void onAttach(Context context) {
-        // Enforce interface implementation on hosting activity
         super.onAttach(context);
         realmHelper = RealmHelper.getInstance();
         try{
@@ -83,6 +91,7 @@ public class ImageDialog extends AppCompatDialogFragment {
         Glide.with(this)
                 .asGif()
                 .load(getImageUrl(gif))
+                .apply(options)
                 .into(image);
 
         favorite.setOnClickListener(new View.OnClickListener() {
@@ -100,28 +109,17 @@ public class ImageDialog extends AppCompatDialogFragment {
 
         url = gif.getUrl();
         id = realmHelper.isFavorite(url);
-        String loadFrom = "Loading image from web: ";
 
-        System.out.println("ID: " + id);
-        System.out.println("URL: " + url);
         if (id > 0) {
             // Already a favorite
             favorite.setImageResource(R.drawable.favorite_icon_checked);
             // Get uri to file on local system
             url = realmHelper.getFilePath(id);
-            loadFrom = "Loading image from file: ";
         }
-        System.out.println(loadFrom + url);
-
         return url;
     }
 
     public void setData(Gif gif){
         this.gif = gif;
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
     }
 }

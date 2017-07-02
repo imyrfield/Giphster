@@ -14,21 +14,20 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/gif_item"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:layout_height="wrap_content">
 
-    <ProgressBar
-        android:id="@+id/progressbar"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        android:layout_marginBottom="@dimen/margin_medium"
-        android:layout_marginEnd="@dimen/margin_medium"
-        android:layout_marginLeft="@dimen/margin_medium"
-        android:layout_marginRight="@dimen/margin_medium"
-        android:layout_marginStart="@dimen/margin_medium"
-        android:layout_marginTop="@dimen/margin_medium"
-        android:visibility="visible" />
+    <!--<ProgressBar-->
+        <!--android:id="@+id/progressbar"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_gravity="center"-->
+        <!--android:layout_marginBottom="@dimen/margin_medium"-->
+        <!--android:layout_marginEnd="@dimen/margin_medium"-->
+        <!--android:layout_marginLeft="@dimen/margin_medium"-->
+        <!--android:layout_marginRight="@dimen/margin_medium"-->
+        <!--android:layout_marginStart="@dimen/margin_medium"-->
+        <!--android:layout_marginTop="@dimen/margin_medium"-->
+        <!--android:visibility="visible" />-->
 
     <ImageView
         android:id="@+id/gif"
@@ -42,17 +41,6 @@
         android:layout_marginStart="@dimen/margin_regular"
         android:layout_marginTop="@dimen/margin_regular"
         android:adjustViewBounds="true"
-        android:src="@android:drawable/ic_menu_gallery"
-        android:visibility="invisible" />
-
-    <ImageView
-        android:id="@+id/favicon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginBottom="48dp"
-        android:layout_marginEnd="52dp"
-        android:layout_marginRight="52dp"
-        android:src="@color/pink"
-        android:visibility="invisible" />
+        android:visibility="visible"
+        android:src="@android:drawable/ic_menu_gallery" />
 </RelativeLayout>

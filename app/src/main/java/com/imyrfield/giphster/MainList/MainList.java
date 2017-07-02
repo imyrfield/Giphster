@@ -13,10 +13,8 @@
 package com.imyrfield.giphster.MainList;
 
 import android.app.DownloadManager;
-import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
@@ -25,22 +23,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import com.imyrfield.giphster.API.GiphyResponseModel.*;
-import com.imyrfield.giphster.RealmHelper;
+import com.imyrfield.giphster.Util.RealmHelper;
 import com.imyrfield.giphster.Util.BusProvider;
 import com.imyrfield.giphster.ImageDialog;
 import com.imyrfield.giphster.R;
 import com.squareup.otto.Subscribe;
 
-import java.io.File;
-import java.net.URI;
-
-import io.realm.Realm;
-
 import static android.os.Environment.DIRECTORY_PICTURES;
 
 public class MainList extends AppCompatActivity implements ImageDialog.FaviconClickHandler {
 
-    private static final String TAG = "Main Activity";
     /**
      * The {@link ViewPager} that will host the section contents.
      */
@@ -80,12 +72,6 @@ public class MainList extends AppCompatActivity implements ImageDialog.FaviconCl
         BusProvider.getInstance().register(this);
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        BusProvider.getInstance().unregister(this);
-    }
-
     @Subscribe
     public void onDialogEvent(BusProvider.DialogEvent event){
         ImageDialog image = new ImageDialog();
@@ -103,14 +89,11 @@ public class MainList extends AppCompatActivity implements ImageDialog.FaviconCl
             //Add to Favorites
             id = downloadGif(gif.getUrl());
             realmHelper.addToRealm(gif, id);
-            System.out.println("Added " + id + " to favorites");
         } else {
             //Remove from favorites
             int removed = deleteGif(realmHelper.getFilePath(id));
             if (removed > 0) realmHelper.removeFromRealm(id);
-            System.out.println("Removed item " + id + " from favorites");
         }
-        //TODO: Update frag based on addition/removal
     }
 
     private long downloadGif(String url){
@@ -126,5 +109,11 @@ public class MainList extends AppCompatActivity implements ImageDialog.FaviconCl
     private int deleteGif(String uri){
         Uri fileUri = Uri.parse(uri);
         return getContentResolver().delete(fileUri, null, null);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        BusProvider.getInstance().unregister(this);
     }
 }

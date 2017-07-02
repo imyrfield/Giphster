@@ -31,10 +31,8 @@ import android.widget.TextView;
 
 import com.imyrfield.giphster.API.GiphyResponseModel;
 import com.imyrfield.giphster.API.GiphyService;
-import com.imyrfield.giphster.PaginationScrollListener;
+import com.imyrfield.giphster.Util.PaginationScrollListener;
 import com.imyrfield.giphster.R;
-
-import org.w3c.dom.Text;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -92,39 +90,19 @@ public class MainFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_list, container, false);
+
         recyclerView = (RecyclerView) rootView.findViewById(R.id.mainlist);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(gifAdapter);
-
-        // Pagination scroll listener
-        scrollListener = new PaginationScrollListener(layoutManager) {
-            @Override
-            public void loadMoreData(int page, int totalItems, RecyclerView rv) {
-
-                if (isSearching) {
-                    displaySearchResults(searchQuery, totalItems);
-                } else {
-                    displayTrending(totalItems);
-                }
-            }
-        };
-        recyclerView.addOnScrollListener(scrollListener);
+        recyclerView.addOnScrollListener(getScrollListener());
 
         emptyView = (TextView) rootView.findViewById(android.R.id.empty);
-        setupEmptyView();
+        toggleEmptyView();
 
         // Default list shows trending Gifs
         displayTrending(0);
 
         return rootView;
-    }
-
-    private void displayTrending(int offSet) {
-        displayGifs(GiphyService.getInstance().getTrendingGifs(offSet));
-    }
-
-    public void displaySearchResults(String search, int offSet) {
-        displayGifs(GiphyService.getInstance().getSearchResults(search, offSet));
     }
 
     @Override
@@ -135,7 +113,7 @@ public class MainFragment extends Fragment {
         MenuItem item = menu.findItem(R.id.menu_search);
 
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
-        searchView.setOnQueryTextListener(textListener(searchView));
+        searchView.setOnQueryTextListener(getTextListener(searchView));
 
         // Had to rollback to supportLibrary 25.3.0 because 26.0.0-alpha1 has a bug with this method
         MenuItemCompat.setOnActionExpandListener(item, new MenuItemCompat.OnActionExpandListener(){
@@ -156,6 +134,14 @@ public class MainFragment extends Fragment {
         });
     }
 
+    private void displayTrending(int offSet) {
+        displayGifs(GiphyService.getInstance().getTrendingGifs(offSet));
+    }
+
+    public void displaySearchResults(String search, int offSet) {
+        displayGifs(GiphyService.getInstance().getSearchResults(search, offSet));
+    }
+
     private void displayGifs(Observable<GiphyResponseModel> observable) {
 
         disposables.add(observable.subscribeOn(Schedulers.io())
@@ -164,22 +150,17 @@ public class MainFragment extends Fragment {
                 .flatMap(Observable::fromIterable)
                 .subscribe(response -> {
                     gifAdapter.add(response.component2().getFixedWidth());
+                    toggleEmptyView();
                 }));
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        disposables.clear();
+    private void toggleEmptyView(){
+        emptyView.setText(R.string.mainlist_loading_error);
+        emptyView.setVisibility(gifAdapter.getItemCount() == 0 ? View.VISIBLE : View.GONE);
+        recyclerView.setVisibility(gifAdapter.getItemCount() == 0 ? View.GONE: View.VISIBLE);
     }
 
-    private void setupEmptyView(){
-        emptyView.setText("Sorry, we seem to be having trouble loading your Gifs");
-        //emptyView.setVisibility(gifAdapter.getItemCount() == 0 ? View.VISIBLE : View.GONE);
-        //recyclerView.setVisibility(gifAdapter.getItemCount() == 0 ? View.GONE: View.VISIBLE);
-    }
-
-    private SearchView.OnQueryTextListener textListener(SearchView view){
+    private SearchView.OnQueryTextListener getTextListener(SearchView view){
 
         return new SearchView.OnQueryTextListener() {
             @Override
@@ -209,5 +190,28 @@ public class MainFragment extends Fragment {
                 return false;
             }
         };
+    }
+
+    /*
+     * Pagination Scroll Listener
+     */
+    private PaginationScrollListener getScrollListener(){
+        return new PaginationScrollListener(layoutManager) {
+            @Override
+            public void loadMoreData(int page, int totalItems, RecyclerView rv) {
+
+                if (isSearching) {
+                    displaySearchResults(searchQuery, totalItems);
+                } else {
+                    displayTrending(totalItems);
+                }
+            }
+        };
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        disposables.clear();
     }
 }

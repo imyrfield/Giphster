@@ -21,7 +21,7 @@ import io.realm.annotations.PrimaryKey
  */
 
 open class FavoritesModel(
-        @PrimaryKey var urlString: String = "",
+        @PrimaryKey var urlString: String = "", // Gifs URL
         var createdAt : Long = 0, // Used to sort Favorites
         var fileId : Long = 0, //Maps to DownloadManager file ID
         var fileUri : String? = null // Uri to file in system

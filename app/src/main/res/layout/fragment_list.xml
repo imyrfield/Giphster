@@ -30,7 +30,7 @@
         android:scrollbars="vertical"
         android:visibility="visible"
         app:layoutManager="android.support.v7.widget.GridLayoutManager"
-        tools:context="com.imyrfield.giphster.MainList.MainFragment"
+        tools:context="com.imyrfield.giphster.MainList.MainList"
         tools:layoutManager="android.support.v7.widget.GridLayoutManager"
         tools:listitem="@layout/list_item" />
 
@@ -38,7 +38,8 @@
         android:id="@android:id/empty"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="No Favorites Added Yet :("
+        android:layout_marginBottom="?android:actionBarSize"
+        android:text="@string/favorites_empty"
         android:gravity="center"
         android:visibility="gone"
         />

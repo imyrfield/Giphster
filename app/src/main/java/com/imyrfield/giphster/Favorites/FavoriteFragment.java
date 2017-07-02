@@ -24,16 +24,8 @@ import android.widget.TextView;
 
 import com.imyrfield.giphster.API.GiphyResponseModel.*;
 import com.imyrfield.giphster.MainList.GifAdapter;
-import com.imyrfield.giphster.MainList.MainList;
 import com.imyrfield.giphster.R;
-import com.imyrfield.giphster.RealmHelper;
-
-import java.util.Iterator;
-
-import io.reactivex.Observable;
-import io.realm.Realm;
-import io.realm.RealmChangeListener;
-import io.realm.RealmResults;
+import com.imyrfield.giphster.Util.RealmHelper;
 
 
 /**
@@ -50,9 +42,7 @@ public class FavoriteFragment extends Fragment{
     private RecyclerView.LayoutManager layoutManager;
     private TextView emptyView;
 
-    public FavoriteFragment(){
-
-    }
+    public FavoriteFragment(){}
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -73,16 +63,11 @@ public class FavoriteFragment extends Fragment{
         recyclerView.setAdapter(mAdapter);
 
         emptyView = (TextView) root.findViewById(android.R.id.empty);
-        setupEmptyView();
+        toggleEmptyView();
 
         getFavorites();
 
         return root;
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
     }
 
     private void getFavorites(){
@@ -92,12 +77,14 @@ public class FavoriteFragment extends Fragment{
                 .forEachRemaining(favoritesModel ->
                         mAdapter.add(new Gif(favoritesModel.getUrlString(), 0, 0))
                 );
+        toggleEmptyView();
         mAdapter.notifyDataSetChanged();
     }
 
-    private void setupEmptyView() {
-       // emptyView.setVisibility(mAdapter.getItemCount() == 0 ? View.VISIBLE : View.GONE);
-        //recyclerView.setVisibility(mAdapter.getItemCount() == 0 ? View.GONE: View.VISIBLE);
+    private void toggleEmptyView() {
+        emptyView.setText(R.string.favorites_empty);
+        emptyView.setVisibility(mAdapter.getItemCount() == 0 ? View.VISIBLE : View.GONE);
+        recyclerView.setVisibility(mAdapter.getItemCount() == 0 ? View.GONE: View.VISIBLE);
     }
 
     @Override
@@ -111,6 +98,5 @@ public class FavoriteFragment extends Fragment{
     public void updateViews(){
         mAdapter.clear();
         getFavorites();
-        System.out.println("called updateViews()");
     }
 }

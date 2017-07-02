@@ -29,13 +29,11 @@ import butterknife.ButterKnife;
 
 class GifViewHolder extends RecyclerView.ViewHolder{
 
-    ProgressBar pbar;
     ImageView gifImage;
 
     public GifViewHolder(View itemView) {
         super(itemView);
 
         gifImage = (ImageView) itemView.findViewById(R.id.gif);
-        pbar = (ProgressBar) itemView.findViewById(R.id.progressbar);
     }
 }
