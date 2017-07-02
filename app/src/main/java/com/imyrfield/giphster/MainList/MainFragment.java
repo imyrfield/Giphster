@@ -78,11 +78,9 @@ public class MainFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         layoutManager = new GridLayoutManager(getActivity(), NUM_COLS);
-        gifAdapter = new GifAdapter(getActivity().getSupportFragmentManager());
-       // gifAdapter = new GifAdapter();
+        gifAdapter = new GifAdapter();
         disposables = new CompositeDisposable();
         setHasOptionsMenu(true);
-
     }
 
     @Override
@@ -93,6 +91,7 @@ public class MainFragment extends Fragment {
         recyclerView = (RecyclerView) rootView.findViewById(R.id.mainlist);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(gifAdapter);
+
         emptyView = (TextView) rootView.findViewById(android.R.id.empty);
         setupEmptyView();
 
@@ -168,11 +167,8 @@ public class MainFragment extends Fragment {
                 .observeOn(AndroidSchedulers.mainThread())
                 .map(response -> response.getData())
                 .flatMap(Observable::fromIterable)
-                //Seperate into method to get URL
                 .subscribe(response -> {
-                    gifAdapter.list.add(response.component2().getFixedWidth()
-                    );
-                    gifAdapter.notifyDataSetChanged();
+                    gifAdapter.add(response.component2().getFixedWidth());
                 }));
     }
 
@@ -183,7 +179,7 @@ public class MainFragment extends Fragment {
     }
 
     private void setupEmptyView(){
-        emptyView.setText("Network Errors");
+        emptyView.setText("Sorry, we seem to be having trouble loading your Gifs");
         //emptyView.setVisibility(gifAdapter.getItemCount() == 0 ? View.VISIBLE : View.GONE);
         //recyclerView.setVisibility(gifAdapter.getItemCount() == 0 ? View.GONE: View.VISIBLE);
     }

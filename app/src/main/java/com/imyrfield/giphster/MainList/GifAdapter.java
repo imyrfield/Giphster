@@ -39,17 +39,11 @@ import static com.bumptech.glide.request.RequestOptions.centerCropTransform;
 
 public class GifAdapter extends RecyclerView.Adapter<GifViewHolder> {
 
-    public List<Gif> list = new ArrayList<>();
-    FragmentManager mFragManager;
-    RequestOptions options = new RequestOptions()
+    List<Gif> list = new ArrayList<>();
+    private RequestOptions options = new RequestOptions()
             .placeholder(R.drawable.ic_image_placeholder)
             .error(R.drawable.ic_image_error)
             .apply(centerCropTransform());
-
-    public GifAdapter(FragmentManager manager){
-        super();
-        mFragManager = manager;
-    }
 
     @Override
     public GifViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -81,18 +75,8 @@ public class GifAdapter extends RecyclerView.Adapter<GifViewHolder> {
             // TODO: hide progress bar and show imageview
             holder.gifImage.setVisibility(View.VISIBLE);
             holder.pbar.setVisibility(View.INVISIBLE);
-            //holder.itemView.setOnClickListener(view -> loadDialog(position));
             holder.itemView.setOnClickListener(view -> BusProvider.getInstance().post( new BusProvider.DialogEvent(list.get(position))));
 
-    }
-
-    private void loadDialog(int pos) {
-        ImageDialog dialog = new ImageDialog();
-        Bundle bundle = new Bundle();
-        bundle.putString("url", list.get(pos).getUrl());
-        dialog.setArguments(bundle);
-
-        dialog.show(mFragManager, "Preview");
     }
 
     @Override
@@ -112,7 +96,26 @@ public class GifAdapter extends RecyclerView.Adapter<GifViewHolder> {
         return list.size();
     }
 
+    public void add(Gif gif){
+        list.add(gif);
+        notifyItemInserted(list.size() + 1);
+    }
+
+    public void remove(Gif gif){
+        int index = getIndex(gif);
+        list.remove(gif);
+        notifyItemRemoved(index);
+    }
+
+    public int getIndex(Gif gif){
+        return list.indexOf(gif);
+    }
+
     public List<Gif> getList(){
         return list;
+    }
+
+    public void clear(){
+        list.clear();
     }
 }

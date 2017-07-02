@@ -34,6 +34,6 @@
         android:layout_alignBottom="@id/expanded_gif"
         android:layout_alignEnd="@id/expanded_gif"
         android:layout_alignRight="@id/expanded_gif"
-        android:src="@drawable/favorite_icon" />
+        android:src="@drawable/favorite_icon_unchecked" />
 
 </RelativeLayout>

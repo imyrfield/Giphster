@@ -22,11 +22,10 @@ package com.imyrfield.giphster; /***********************************************
  * permissions and limitations under the License.                                                   *
  ****************************************************************************************************/
 
-import android.app.Dialog;
+import android.app.DownloadManager;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatDialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,7 +35,10 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.imyrfield.giphster.API.GiphyResponseModel.*;
-import com.imyrfield.giphster.R;
+import com.imyrfield.giphster.Favorites.FavoritesModel;
+
+import io.realm.Realm;
+import io.realm.RealmResults;
 
 /**
  * Created by imyrfield on 2017-06-22.
@@ -44,19 +46,23 @@ import com.imyrfield.giphster.R;
 
 public class ImageDialog extends AppCompatDialogFragment {
 
-    private ImageView image;
     private Gif gif;
     private ImageButton favorite;
     FaviconClickHandler mFaviconClickHandler;
+    RealmHelper realmHelper;
+    RealmResults<FavoritesModel> query;
+    String url;
+    long id = 0;
 
     public interface FaviconClickHandler{
-        void isFavorite(Gif gif);
+        void toggleFavorite(Gif gif, long id);
     }
 
     @Override
     public void onAttach(Context context) {
         // Enforce interface implementation on hosting activity
         super.onAttach(context);
+        realmHelper = RealmHelper.getInstance();
         try{
             mFaviconClickHandler = (FaviconClickHandler) getActivity();
         }catch (ClassCastException e){
@@ -71,25 +77,51 @@ public class ImageDialog extends AppCompatDialogFragment {
         View root = inflater.inflate(R.layout.image_dialog, container, false);
         root.setClickable(false);
 
-        image = (ImageView) root.findViewById(R.id.expanded_gif);
+        ImageView image = (ImageView) root.findViewById(R.id.expanded_gif);
+        favorite = (ImageButton) root.findViewById(R.id.favorite_icon);
+
         Glide.with(this)
                 .asGif()
-                .load(gif.getUrl()).into(image);
+                .load(getImageUrl(gif))
+                .into(image);
 
-        favorite = (ImageButton) root.findViewById(R.id.favorite_icon);
         favorite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mFaviconClickHandler.isFavorite(gif);
+                mFaviconClickHandler.toggleFavorite(gif, id);
+                dismiss();
             }
         });
 
         return root;
     }
 
+    private String getImageUrl(Gif gif){
+
+        url = gif.getUrl();
+        id = realmHelper.isFavorite(url);
+        String loadFrom = "Loading image from web: ";
+
+        System.out.println("ID: " + id);
+        System.out.println("URL: " + url);
+        if (id > 0) {
+            // Already a favorite
+            favorite.setImageResource(R.drawable.favorite_icon_checked);
+            // Get uri to file on local system
+            url = realmHelper.getFilePath(id);
+            loadFrom = "Loading image from file: ";
+        }
+        System.out.println(loadFrom + url);
+
+        return url;
+    }
+
     public void setData(Gif gif){
         this.gif = gif;
     }
 
-
+    @Override
+    public void onDetach() {
+        super.onDetach();
+    }
 }

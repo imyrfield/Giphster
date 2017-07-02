@@ -51,5 +51,4 @@ public class Utility {
         return  retrofit.create(serviceClass);
     }
 
-
 }

@@ -26,10 +26,5 @@ public class GifApplication extends Application {
     public void onCreate() {
         super.onCreate();
         Realm.init(this);
-        // TODO: Realm Config??
-        // RealmConfiguration realmConfiguration = new RealmConfiguration.Builder().build();
-        // Realm.setDefaultConfiguration(realmConfiguration);
-
-
     }
 }

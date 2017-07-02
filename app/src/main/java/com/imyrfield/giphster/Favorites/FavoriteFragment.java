@@ -15,75 +15,102 @@ package com.imyrfield.giphster.Favorites;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.imyrfield.giphster.API.GiphyResponseModel;
+import com.imyrfield.giphster.API.GiphyResponseModel.*;
+import com.imyrfield.giphster.MainList.GifAdapter;
+import com.imyrfield.giphster.MainList.MainList;
 import com.imyrfield.giphster.R;
+import com.imyrfield.giphster.RealmHelper;
 
-import java.util.List;
+import java.util.Iterator;
 
+import io.reactivex.Observable;
 import io.realm.Realm;
+import io.realm.RealmChangeListener;
+import io.realm.RealmResults;
+
 
 /**
  * Created by imyrfield on 2017-06-20.
  */
 
-public class FavoriteFragment extends Fragment {
+public class FavoriteFragment extends Fragment{
 
+    private static final int NUM_COLS = 2;
+    private RealmHelper realmHelper;
 
-    private RecyclerView rv;
-    private Realm realm;
-    private List<GiphyResponseModel.Gif> favorites;
+    private RecyclerView recyclerView;
+    private GifAdapter mAdapter;
+    private RecyclerView.LayoutManager layoutManager;
+    private TextView emptyView;
+
+    public FavoriteFragment(){
+
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
-        realm = Realm.getDefaultInstance();
+
+        realmHelper = RealmHelper.getInstance();
+        mAdapter = new GifAdapter();
+        layoutManager = new GridLayoutManager(getActivity(), NUM_COLS);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
         View root = inflater.inflate(R.layout.fragment_list, container, false);
-        rv = (RecyclerView) root.findViewById(R.id.mainlist);
-        TextView empty = (TextView) root.findViewById(android.R.id.empty);
-        rv.setVisibility(View.GONE);
-        empty.setVisibility(View.VISIBLE);
+        recyclerView = (RecyclerView) root.findViewById(R.id.mainlist);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(mAdapter);
+
+        emptyView = (TextView) root.findViewById(android.R.id.empty);
+        setupEmptyView();
+
+        getFavorites();
+
         return root;
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        realm.close();
+    public void onStop() {
+        super.onStop();
     }
 
-//    // Listeners will be notified when data changes
-//    puppies.addChangeListener(new OrderedRealmCollectionChangeListener<RealmResults<Dog>>() {
-//        @Override
-//        public void onChange(RealmResults<Dog> results, OrderedCollectionChangeSet changeSet) {
-//            // Query results are updated in real time with fine grained notifications.
-//            changeSet.getInsertions(); // => [0] is added.
-//        }
-//    });
-//
-//// Asynchronously update objects on a background thread
-//   realm.executeTransactionAsync(new Realm.Transaction() {
-//        @Override
-//        public void execute(Realm bgRealm) {
-//            Dog dog = bgRealm.where(Dog.class).equalTo("age", 1).findFirst();
-//            dog.setAge(3);
-//        }
-//    }, new Realm.Transaction.OnSuccess() {
-//        @Override
-//        public void onSuccess() {
-//            // Original queries and Realm objects are automatically updated.
-//            puppies.size(); // => 0 because there are no more puppies younger than 2 years old
-//            managedDog.getAge();   // => 3 the dogs age is updated
-//        }
-//    });
+    private void getFavorites(){
 
+        realmHelper.getFavorites()
+                .iterator()
+                .forEachRemaining(favoritesModel ->
+                        mAdapter.add(new Gif(favoritesModel.getUrlString(), 0, 0))
+                );
+        mAdapter.notifyDataSetChanged();
+    }
+
+    private void setupEmptyView() {
+       // emptyView.setVisibility(mAdapter.getItemCount() == 0 ? View.VISIBLE : View.GONE);
+        //recyclerView.setVisibility(mAdapter.getItemCount() == 0 ? View.GONE: View.VISIBLE);
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser){
+            updateViews();
+        }
+    }
+
+    public void updateViews(){
+        mAdapter.clear();
+        getFavorites();
+        System.out.println("called updateViews()");
+    }
 }
