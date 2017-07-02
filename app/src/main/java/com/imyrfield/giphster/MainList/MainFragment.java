@@ -31,6 +31,7 @@ import android.widget.TextView;
 
 import com.imyrfield.giphster.API.GiphyResponseModel;
 import com.imyrfield.giphster.API.GiphyService;
+import com.imyrfield.giphster.PaginationScrollListener;
 import com.imyrfield.giphster.R;
 
 import org.w3c.dom.Text;
@@ -54,10 +55,13 @@ public class MainFragment extends Fragment {
     private static final String ARG_SECTION_NUMBER = "section_number";
     private static final int NUM_COLS = 2;
     private RecyclerView recyclerView;
-    private RecyclerView.LayoutManager layoutManager;
+    private GridLayoutManager layoutManager;
     private GifAdapter gifAdapter;
     private CompositeDisposable disposables;
     private TextView emptyView;
+    private PaginationScrollListener scrollListener;
+    private boolean isSearching = false;
+    private String searchQuery;
 
     public MainFragment() {
     }
@@ -92,21 +96,35 @@ public class MainFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(gifAdapter);
 
+        // Pagination scroll listener
+        scrollListener = new PaginationScrollListener(layoutManager) {
+            @Override
+            public void loadMoreData(int page, int totalItems, RecyclerView rv) {
+
+                if (isSearching) {
+                    displaySearchResults(searchQuery, totalItems);
+                } else {
+                    displayTrending(totalItems);
+                }
+            }
+        };
+        recyclerView.addOnScrollListener(scrollListener);
+
         emptyView = (TextView) rootView.findViewById(android.R.id.empty);
         setupEmptyView();
 
         // Default list shows trending Gifs
-        displayTrending();
+        displayTrending(0);
 
         return rootView;
     }
 
-    private void displayTrending() {
-        displayGifs(GiphyService.getInstance().getTrendingGifs());
+    private void displayTrending(int offSet) {
+        displayGifs(GiphyService.getInstance().getTrendingGifs(offSet));
     }
 
-    public void displaySearchResults(String search) {
-        displayGifs(GiphyService.getInstance().getSearchResults(search));
+    public void displaySearchResults(String search, int offSet) {
+        displayGifs(GiphyService.getInstance().getSearchResults(search, offSet));
     }
 
     @Override
@@ -117,33 +135,7 @@ public class MainFragment extends Fragment {
         MenuItem item = menu.findItem(R.id.menu_search);
 
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-
-                displaySearchResults(query);
-
-                //Hides keyboard after submitting
-                //searchView.setFocusable(false);
-                searchView.clearFocus();
-                try {
-                    InputMethodManager input = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
-                    input.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-
-                //pass info to fragment?
-                //Separate displayGifs method into utility, and pass list to it?
-                return false;
-            }
-        });
+        searchView.setOnQueryTextListener(textListener(searchView));
 
         // Had to rollback to supportLibrary 25.3.0 because 26.0.0-alpha1 has a bug with this method
         MenuItemCompat.setOnActionExpandListener(item, new MenuItemCompat.OnActionExpandListener(){
@@ -155,14 +147,17 @@ public class MainFragment extends Fragment {
 
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
-                displayTrending();
+                isSearching = false;
+                gifAdapter.clear();
+                scrollListener.reset();
+                displayTrending(0);
                 return true;
             }
         });
     }
 
     private void displayGifs(Observable<GiphyResponseModel> observable) {
-        gifAdapter.list.clear();
+
         disposables.add(observable.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .map(response -> response.getData())
@@ -182,5 +177,37 @@ public class MainFragment extends Fragment {
         emptyView.setText("Sorry, we seem to be having trouble loading your Gifs");
         //emptyView.setVisibility(gifAdapter.getItemCount() == 0 ? View.VISIBLE : View.GONE);
         //recyclerView.setVisibility(gifAdapter.getItemCount() == 0 ? View.GONE: View.VISIBLE);
+    }
+
+    private SearchView.OnQueryTextListener textListener(SearchView view){
+
+        return new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+
+                searchQuery = query;
+                isSearching = true;
+                gifAdapter.clear();
+                scrollListener.reset();
+
+                displaySearchResults(query, 0);
+
+                //Hides keyboard after submitting
+                view.clearFocus();
+                try {
+                    InputMethodManager input = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
+                    input.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        };
     }
 }

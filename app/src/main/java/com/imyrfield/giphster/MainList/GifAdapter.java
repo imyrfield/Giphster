@@ -39,7 +39,7 @@ import static com.bumptech.glide.request.RequestOptions.centerCropTransform;
 
 public class GifAdapter extends RecyclerView.Adapter<GifViewHolder> {
 
-    List<Gif> list = new ArrayList<>();
+    private List<Gif> list = new ArrayList<>();
     private RequestOptions options = new RequestOptions()
             .placeholder(R.drawable.ic_image_placeholder)
             .error(R.drawable.ic_image_error)
@@ -117,5 +117,6 @@ public class GifAdapter extends RecyclerView.Adapter<GifViewHolder> {
 
     public void clear(){
         list.clear();
+        notifyDataSetChanged();
     }
 }
