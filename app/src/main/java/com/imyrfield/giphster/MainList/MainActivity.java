@@ -25,30 +25,20 @@ import android.support.v7.widget.Toolbar;
 import com.imyrfield.giphster.API.GiphyResponseModel.*;
 import com.imyrfield.giphster.Util.RealmHelper;
 import com.imyrfield.giphster.Util.BusProvider;
-import com.imyrfield.giphster.ImageDialog;
+import com.imyrfield.giphster.Util.ImageDialog;
 import com.imyrfield.giphster.R;
 import com.squareup.otto.Subscribe;
 
 import static android.os.Environment.DIRECTORY_PICTURES;
 
-public class MainList extends AppCompatActivity implements ImageDialog.FaviconClickHandler {
+public class MainActivity extends AppCompatActivity implements ImageDialog.FaviconClickHandler {
 
     /**
      * The {@link ViewPager} that will host the section contents.
      */
-    ViewPager mViewPager;
-    TabLayout tabLayout;
-    DownloadManager manager;
-
-    /**
-     * The {@link android.support.v4.view.PagerAdapter} that will provide
-     * fragments for each of the sections. We use a
-     * {@link FragmentPagerAdapter} derivative, which will keep every
-     * loaded fragment in memory. If this becomes too memory intensive, it
-     * may be best to switch to a
-     * {@link android.support.v4.app.FragmentStatePagerAdapter}.
-     */
-    private SectionsPagerAdapter mSectionsPagerAdapter;
+    private ViewPager mViewPager;
+    private TabLayout tabLayout;
+    private DownloadManager manager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +50,15 @@ public class MainList extends AppCompatActivity implements ImageDialog.FaviconCl
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        /*
+      The {@link android.support.v4.view.PagerAdapter} that will provide
+      fragments for each of the sections. We use a
+      {@link FragmentPagerAdapter} derivative, which will keep every
+      loaded fragment in memory. If this becomes too memory intensive, it
+      may be best to switch to a
+      {@link android.support.v4.app.FragmentStatePagerAdapter}.
+     */
+        SectionsPagerAdapter mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
         mViewPager = (ViewPager) findViewById(R.id.container);
 
         // Set up the ViewPager with the sections adapter.

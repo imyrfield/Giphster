@@ -27,6 +27,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.imyrfield.giphster.API.GiphyResponseModel;
@@ -45,7 +46,6 @@ import io.reactivex.schedulers.Schedulers;
 
 public class MainFragment extends Fragment {
 
-    static final String TAG = MainFragment.class.getSimpleName();
     /**
      * The fragment argument representing the section number for this
      * fragment.
@@ -60,6 +60,8 @@ public class MainFragment extends Fragment {
     private PaginationScrollListener scrollListener;
     private boolean isSearching = false;
     private String searchQuery;
+    private String emptyText;
+    private ProgressBar pbar;
 
     public MainFragment() {
     }
@@ -95,9 +97,11 @@ public class MainFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(gifAdapter);
         recyclerView.addOnScrollListener(getScrollListener());
+        pbar = (ProgressBar) rootView.findViewById(R.id.search_progress);
 
         emptyView = (TextView) rootView.findViewById(android.R.id.empty);
-        toggleEmptyView();
+        emptyText = getActivity().getString(R.string.mainlist_loading_empty);
+        toggleEmptyView(emptyText);
 
         // Default list shows trending Gifs
         displayTrending(0);
@@ -135,10 +139,12 @@ public class MainFragment extends Fragment {
     }
 
     private void displayTrending(int offSet) {
+        emptyText = getActivity().getString(R.string.mainlist_loading_empty);
         displayGifs(GiphyService.getInstance().getTrendingGifs(offSet));
     }
 
-    public void displaySearchResults(String search, int offSet) {
+    private void displaySearchResults(String search, int offSet) {
+        emptyText = getResources().getString(R.string.search_empty);
         displayGifs(GiphyService.getInstance().getSearchResults(search, offSet));
     }
 
@@ -150,12 +156,13 @@ public class MainFragment extends Fragment {
                 .flatMap(Observable::fromIterable)
                 .subscribe(response -> {
                     gifAdapter.add(response.component2().getFixedWidth());
-                    toggleEmptyView();
+                    pbar.setVisibility(View.GONE);
+                    toggleEmptyView(emptyText);
                 }));
     }
 
-    private void toggleEmptyView(){
-        emptyView.setText(R.string.mainlist_loading_error);
+    private void toggleEmptyView(String text){
+        emptyView.setText(text);
         emptyView.setVisibility(gifAdapter.getItemCount() == 0 ? View.VISIBLE : View.GONE);
         recyclerView.setVisibility(gifAdapter.getItemCount() == 0 ? View.GONE: View.VISIBLE);
     }
@@ -170,6 +177,7 @@ public class MainFragment extends Fragment {
                 isSearching = true;
                 gifAdapter.clear();
                 scrollListener.reset();
+                pbar.setVisibility(View.VISIBLE);
 
                 displaySearchResults(query, 0);
 
@@ -196,7 +204,7 @@ public class MainFragment extends Fragment {
      * Pagination Scroll Listener
      */
     private PaginationScrollListener getScrollListener(){
-        return new PaginationScrollListener(layoutManager) {
+        scrollListener = new PaginationScrollListener(layoutManager) {
             @Override
             public void loadMoreData(int page, int totalItems, RecyclerView rv) {
 
@@ -207,6 +215,7 @@ public class MainFragment extends Fragment {
                 }
             }
         };
+        return scrollListener;
     }
 
     @Override

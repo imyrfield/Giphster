@@ -17,6 +17,14 @@
     android:layout_height="match_parent"
     android:layout_width="match_parent">
 
+    <ProgressBar
+        android:id="@+id/search_progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_medium"
+        android:layout_gravity="center"
+        android:visibility="gone"/>
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/mainlist"
         android:layout_width="match_parent"
@@ -30,7 +38,7 @@
         android:scrollbars="vertical"
         android:visibility="visible"
         app:layoutManager="android.support.v7.widget.GridLayoutManager"
-        tools:context="com.imyrfield.giphster.MainList.MainList"
+        tools:context="com.imyrfield.giphster.MainList.MainActivity"
         tools:layoutManager="android.support.v7.widget.GridLayoutManager"
         tools:listitem="@layout/list_item" />
 

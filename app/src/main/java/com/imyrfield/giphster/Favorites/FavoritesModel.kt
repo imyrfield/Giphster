@@ -12,7 +12,6 @@
 
 package com.imyrfield.giphster.Favorites
 
-import android.net.Uri
 import io.realm.RealmObject
 import io.realm.annotations.PrimaryKey
 
@@ -25,4 +24,4 @@ open class FavoritesModel(
         var createdAt : Long = 0, // Used to sort Favorites
         var fileId : Long = 0, //Maps to DownloadManager file ID
         var fileUri : String? = null // Uri to file in system
-) : RealmObject(){}
+) : RealmObject()

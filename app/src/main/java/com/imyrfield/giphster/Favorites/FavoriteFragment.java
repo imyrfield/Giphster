@@ -95,7 +95,7 @@ public class FavoriteFragment extends Fragment{
         }
     }
 
-    public void updateViews(){
+    private void updateViews(){
         mAdapter.clear();
         getFavorites();
     }

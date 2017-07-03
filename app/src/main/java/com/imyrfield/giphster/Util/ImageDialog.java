@@ -10,18 +10,7 @@
  * permissions and limitations under the License.                                                   *
  ****************************************************************************************************/
 
-package com.imyrfield.giphster; /****************************************************************************************************
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file        *
- * except in compliance with the License. You may obtain a copy of the License at:                  *
- *                                                                                                  *
- * http://www.apache.org/licenses/LICENSE-2.0                                                       *
- *                                                                                                  *
- * Unless required by applicable law or agreed to in writing, software distributed under the        *
- * License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY              *
- * KIND, either express or implied. See the License for the specific language governing             *
- * permissions and limitations under the License.                                                   *
- ****************************************************************************************************/
-
+package com.imyrfield.giphster.Util;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -36,11 +25,10 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.imyrfield.giphster.API.GiphyResponseModel.*;
 import com.imyrfield.giphster.Favorites.FavoritesModel;
+import com.imyrfield.giphster.R;
 import com.imyrfield.giphster.Util.RealmHelper;
 
 import io.realm.RealmResults;
-
-import static com.bumptech.glide.request.RequestOptions.centerCropTransform;
 
 /**
  * Created by imyrfield on 2017-06-22.
@@ -50,16 +38,13 @@ public class ImageDialog extends AppCompatDialogFragment {
 
     private Gif gif;
     private ImageButton favorite;
-    FaviconClickHandler mFaviconClickHandler;
-    RealmHelper realmHelper;
-    RealmResults<FavoritesModel> query;
-    String url;
-    long id = 0;
+    private FaviconClickHandler mFaviconClickHandler;
+    private RealmHelper realmHelper;
+    private String url;
+    private long id = 0;
 
-    private RequestOptions options = new RequestOptions()
-            .error(R.drawable.ic_image_error)
-            .apply(centerCropTransform());
-
+    private final RequestOptions options = new RequestOptions()
+            .error(R.drawable.ic_image_error);
     public interface FaviconClickHandler{
         void toggleFavorite(Gif gif, long id);
     }

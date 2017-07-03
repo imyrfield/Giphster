@@ -13,11 +13,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.imyrfield.giphster.MainList.MainList">
+    tools:context="com.imyrfield.giphster.MainList.MainActivity">
     <item
         android:id="@+id/menu_search"
         android:orderInCategory="100"
-        android:title="Search"
+        android:title="@string/search_title"
         android:icon="@android:drawable/ic_menu_search"
         app:showAsAction="ifRoom|collapseActionView"
         app:actionViewClass="android.support.v7.widget.SearchView"/>

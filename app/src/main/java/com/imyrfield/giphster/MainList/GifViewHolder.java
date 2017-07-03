@@ -12,16 +12,11 @@
 
 package com.imyrfield.giphster.MainList;
 
-import android.media.Image;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 
 import com.imyrfield.giphster.R;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * Created by imyrfield on 2017-06-21.
@@ -29,7 +24,7 @@ import butterknife.ButterKnife;
 
 class GifViewHolder extends RecyclerView.ViewHolder{
 
-    ImageView gifImage;
+    final ImageView gifImage;
 
     public GifViewHolder(View itemView) {
         super(itemView);

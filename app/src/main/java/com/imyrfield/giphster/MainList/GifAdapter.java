@@ -12,30 +12,19 @@
 
 package com.imyrfield.giphster.MainList;
 
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.DataSource;
-import com.bumptech.glide.load.engine.GlideException;
-import com.bumptech.glide.load.resource.gif.GifDrawable;
-import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
-import com.bumptech.glide.request.target.Target;
 import com.imyrfield.giphster.API.GiphyResponseModel.*;
-import com.imyrfield.giphster.ImageDialog;
 import com.imyrfield.giphster.R;
 import com.imyrfield.giphster.Util.BusProvider;
 
 import java.util.ArrayList;
 import java.util.List;
-import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
+
 import static com.bumptech.glide.request.RequestOptions.centerCropTransform;
 
 
@@ -46,8 +35,8 @@ import static com.bumptech.glide.request.RequestOptions.centerCropTransform;
 
 public class GifAdapter extends RecyclerView.Adapter<GifViewHolder> {
 
-    private List<Gif> list = new ArrayList<>();
-    private RequestOptions options = new RequestOptions()
+    private final List<Gif> list = new ArrayList<>();
+    private final RequestOptions options = new RequestOptions()
             .placeholder(R.drawable.ic_image_placeholder)
             .error(R.drawable.ic_image_error)
             .apply(centerCropTransform());
@@ -90,11 +79,6 @@ public class GifAdapter extends RecyclerView.Adapter<GifViewHolder> {
     }
 
     @Override
-    public long getItemId(int position) {
-        return super.getItemId(position);
-    }
-
-    @Override
     public int getItemCount() {
         return list.size();
     }
@@ -110,12 +94,8 @@ public class GifAdapter extends RecyclerView.Adapter<GifViewHolder> {
         notifyItemRemoved(index);
     }
 
-    public int getIndex(Gif gif){
+    private int getIndex(Gif gif){
         return list.indexOf(gif);
-    }
-
-    public List<Gif> getList(){
-        return list;
     }
 
     public void clear(){
