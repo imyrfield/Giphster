@@ -13,25 +13,93 @@
 package com.imyrfield.giphster.MainList;
 
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 import android.view.ViewGroup;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+import com.imyrfield.giphster.API.GiphyResponseModel.*;
+import com.imyrfield.giphster.R;
+import com.imyrfield.giphster.Util.BusProvider;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.bumptech.glide.request.RequestOptions.centerCropTransform;
+
+
 
 /**
  * Created by imyrfield on 2017-06-20.
  */
 
-public class GifAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class GifAdapter extends RecyclerView.Adapter<GifViewHolder> {
+
+    private final List<Gif> list = new ArrayList<>();
+    private final RequestOptions options = new RequestOptions()
+            .placeholder(R.drawable.ic_image_placeholder)
+            .error(R.drawable.ic_image_error)
+            .apply(centerCropTransform());
+
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return null;
+    public GifViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        return new GifViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item, parent, false));
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+        BusProvider.getInstance().register(this);
+        super.onAttachedToRecyclerView(recyclerView);
+    }
 
+    @Override
+    public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
+        BusProvider.getInstance().unregister(this);
+        super.onDetachedFromRecyclerView(recyclerView);
+
+    }
+
+    @Override
+    public void onBindViewHolder(GifViewHolder holder, int position) {
+
+        Glide.with(holder.gifImage.getContext())
+                .asGif()
+                .load(list.get(position).getUrl())
+                .apply(options)
+                .into(holder.gifImage);
+
+        holder.itemView.setOnClickListener(view -> BusProvider.getInstance().post( new BusProvider.DialogEvent(list.get(position))));
+    }
+
+    @Override
+    public void onViewRecycled(final GifViewHolder holder) {
+        super.onViewRecycled(holder);
+        Glide.with(holder.gifImage.getContext()).clear(holder.gifImage);
+        holder.gifImage.setImageDrawable(null);
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return list.size();
+    }
+
+    public void add(Gif gif){
+        list.add(gif);
+        notifyItemInserted(list.size() + 1);
+    }
+
+    public void remove(Gif gif){
+        int index = getIndex(gif);
+        list.remove(gif);
+        notifyItemRemoved(index);
+    }
+
+    private int getIndex(Gif gif){
+        return list.indexOf(gif);
+    }
+
+    public void clear(){
+        list.clear();
+        notifyDataSetChanged();
     }
 }

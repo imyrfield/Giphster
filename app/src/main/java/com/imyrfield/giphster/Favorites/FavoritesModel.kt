@@ -10,11 +10,18 @@
  * permissions and limitations under the License.                                                   *
  ****************************************************************************************************/
 
-package com.imyrfield.giphster.Favorites;
+package com.imyrfield.giphster.Favorites
+
+import io.realm.RealmObject
+import io.realm.annotations.PrimaryKey
 
 /**
- * Created by imyrfield on 2017-06-20.
+ * Created by imyrfield on 2017-06-25.
  */
 
-public class FavoriteAdapter {
-}
+open class FavoritesModel(
+        @PrimaryKey var urlString: String = "", // Gifs URL
+        var createdAt : Long = 0, // Used to sort Favorites
+        var fileId : Long = 0, //Maps to DownloadManager file ID
+        var fileUri : String? = null // Uri to file in system
+) : RealmObject()

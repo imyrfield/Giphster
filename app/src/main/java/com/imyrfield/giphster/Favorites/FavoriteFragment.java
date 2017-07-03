@@ -12,9 +12,91 @@
 
 package com.imyrfield.giphster.Favorites;
 
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+
+import com.imyrfield.giphster.API.GiphyResponseModel.*;
+import com.imyrfield.giphster.MainList.GifAdapter;
+import com.imyrfield.giphster.R;
+import com.imyrfield.giphster.Util.RealmHelper;
+
+
 /**
  * Created by imyrfield on 2017-06-20.
  */
 
-public class FavoriteFragment {
+public class FavoriteFragment extends Fragment{
+
+    private static final int NUM_COLS = 2;
+    private RealmHelper realmHelper;
+
+    private RecyclerView recyclerView;
+    private GifAdapter mAdapter;
+    private RecyclerView.LayoutManager layoutManager;
+    private TextView emptyView;
+
+    public FavoriteFragment(){}
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+
+        super.onCreate(savedInstanceState);
+
+        realmHelper = RealmHelper.getInstance();
+        mAdapter = new GifAdapter();
+        layoutManager = new GridLayoutManager(getActivity(), NUM_COLS);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
+        View root = inflater.inflate(R.layout.fragment_list, container, false);
+        recyclerView = (RecyclerView) root.findViewById(R.id.mainlist);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(mAdapter);
+
+        emptyView = (TextView) root.findViewById(android.R.id.empty);
+        toggleEmptyView();
+
+        getFavorites();
+
+        return root;
+    }
+
+    private void getFavorites(){
+
+        realmHelper.getFavorites()
+                .iterator()
+                .forEachRemaining(favoritesModel ->
+                        mAdapter.add(new Gif(favoritesModel.getUrlString(), 0, 0))
+                );
+        toggleEmptyView();
+        mAdapter.notifyDataSetChanged();
+    }
+
+    private void toggleEmptyView() {
+        emptyView.setText(R.string.favorites_empty);
+        emptyView.setVisibility(mAdapter.getItemCount() == 0 ? View.VISIBLE : View.GONE);
+        recyclerView.setVisibility(mAdapter.getItemCount() == 0 ? View.GONE: View.VISIBLE);
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser){
+            updateViews();
+        }
+    }
+
+    private void updateViews(){
+        mAdapter.clear();
+        getFavorites();
+    }
 }

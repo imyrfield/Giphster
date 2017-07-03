@@ -10,44 +10,25 @@
  * permissions and limitations under the License.                                                   *
  ****************************************************************************************************/
 
-package com.imyrfield.giphster.API;
+package com.imyrfield.giphster.MainList;
 
-import com.imyrfield.giphster.Util.NetworkUtility;
+import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.ImageView;
 
-import io.reactivex.Observable;
+import com.imyrfield.giphster.R;
 
 /**
- * Created by imyrfield on 2017-06-20.
+ * Created by imyrfield on 2017-06-21.
  */
 
-public final class GiphyService {
+class GifViewHolder extends RecyclerView.ViewHolder{
 
-    private static final int NUM_RESULTS = 24;
-    private static final String API_KEY = "dc6zaTOxFJmzC";
+    final ImageView gifImage;
 
-    private static IGiphyAPI giphyAPI;
-    private static volatile GiphyService instance;
+    public GifViewHolder(View itemView) {
+        super(itemView);
 
-    private GiphyService(){
-        giphyAPI = NetworkUtility.createService(IGiphyAPI.class);
-    }
-
-    public static GiphyService getInstance(){
-        if (instance == null){
-            synchronized (GiphyService.class){
-                if (instance == null) {
-                    instance = new GiphyService();
-                }
-            }
-        }
-        return instance;
-    }
-
-    public Observable<GiphyResponseModel> getTrendingGifs(int offSet){
-        return giphyAPI.trending(API_KEY, NUM_RESULTS, offSet);
-    }
-
-    public Observable<GiphyResponseModel> getSearchResults(String search, int offSet){
-        return giphyAPI.search(API_KEY, search, NUM_RESULTS, offSet);
+        gifImage = (ImageView) itemView.findViewById(R.id.gif);
     }
 }

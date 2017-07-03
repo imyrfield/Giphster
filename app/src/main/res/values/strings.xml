@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">Giphster</string>
-    <string name="action_settings">Settings</string>
-    <string name="section_format">Hello World from section: %1$d</string>
+    <string name="favorites_empty">No Favorites Added Yet :(</string>
+    <string name="mainlist_loading_empty">Sorry, we seem to be having trouble loading your Gifs</string>
+    <string name="search_empty">No results found for your search :(</string>
+    <string name="search_title">Search</string>
 </resources>

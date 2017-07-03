@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   ~ Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file       ~
   ~ except in compliance with the License. You may obtain a copy of the License at:                 ~
@@ -10,20 +11,28 @@
   ~ permissions and limitations under the License.                                                  ~
   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
 
-<android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/mainlist"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginBottom="@dimen/margin_regular"
-    android:layout_marginEnd="@dimen/margin_regular"
-    android:layout_marginLeft="@dimen/margin_regular"
-    android:layout_marginRight="@dimen/margin_regular"
-    android:layout_marginStart="@dimen/margin_regular"
-    android:layout_marginTop="@dimen/margin_regular"
-    android:scrollbars="vertical"
-    app:layoutManager="android.support.v7.widget.GridLayoutManager"
-    tools:context="com.imyrfield.giphster.MainList.MainFragment"
-    tools:layoutManager="android.support.v7.widget.GridLayoutManager"
-    tools:listitem="@layout/list_item" />
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/expanded_gif"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:layout_centerInParent="true"
+        android:src="@drawable/ic_image_placeholder"
+        />
+
+    <ImageButton
+        android:id="@+id/favorite_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:layout_margin="@dimen/margin_regular"
+        android:layout_alignBottom="@id/expanded_gif"
+        android:layout_alignEnd="@id/expanded_gif"
+        android:layout_alignRight="@id/expanded_gif"
+        android:src="@drawable/favorite_icon_unchecked" />
+
+</RelativeLayout>
